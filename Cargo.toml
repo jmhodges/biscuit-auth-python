@@ -5,8 +5,10 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "biscuit_auth_python"
-crate-type = ["cdylib"]
+name = "biscuit_auth"
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-pyo3 = { version = "0.15.1", features = ["extension-module"] }
+# FIXME add anyhow to features
+pyo3 = { version = "0.16.4", features = ["extension-module"] }
+biscuit-auth = { version = "2.2.0" }

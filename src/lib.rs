@@ -1,15 +1,15 @@
-
 use pyo3::prelude::*;
 
-/// Formats the sum of two numbers as string.
-#[pyfunction]
-fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
-    Ok((a + b).to_string())
+use biscuit_auth::{builder::*, error, Authorizer, Biscuit, KeyPair as BiscKeyPair};
+
+#[pyclass]
+struct KeyPair {
+    key_pair: BiscKeyPair,
 }
 
 /// A Python module implemented in Rust.
 #[pymodule]
-fn biscuit_auth_python(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;
+fn biscuit_auth(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_class::<KeyPair>()?;
     Ok(())
 }
