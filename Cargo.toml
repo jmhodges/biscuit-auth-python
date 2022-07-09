@@ -10,5 +10,5 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 # FIXME add anyhow to features
-pyo3 = { version = "0.16.5", features = ["extension-module", "auto-initialize"] }
+pyo3 = { version = "0.16.5", features = ["extension-module"] }
 biscuit-auth = { version = "2.2.0" }

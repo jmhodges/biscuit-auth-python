@@ -3,13 +3,13 @@
  SPDX-License-Identifier: Apache-2.0
 -->
 
-Build with `maturin build`
 
-But really by creating a virtualenv and running `maturin develop`.
+Build by creating a virtualenv and running `pip install`. Afterwards, you can
+use the `maturin` command from the PyO3 project (e.g. `maturin develop`) and run
+tests with `./test.sh`.
 
 ```
-python3 -m venv .env
-source .env/bin/activate
-pip install maturin
-maturin develop
+python3 -m venv .venv
+source .venv/bin/activate
+pip install .
 ```
