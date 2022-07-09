@@ -31,9 +31,10 @@ impl Biscuit {
         let root = BAKeyPair::from(py_root.key_pair.private());
         // BiscuitBuilderTryBuilder is made by oururoboros to allow store
         // BABiscuitBuilder's in a Python object. BABiscuitBuilder has a
-        // required lifetime annotation, and so we adapt a technique from crfs
-        // to our own needs (see
-        // https://github.com/messense/crfs-rs/blob/main/python/src/lib.rs#L56-L72)
+        // required lifetime annotation and those around allowed in `#[pyclass]`
+        // structs, and so we adapt a technique from crfs to our own needs (see
+        // https://github.com/messense/crfs-rs/blob/main/python/src/lib.rs#L56-L72).
+        // Seeing `'this` in Rust code is very funny.
         let builder_res = BiscuitBuilderTryBuilder {
             key_pair: root,
             builder_builder: |kp| Ok(BABiscuit::builder(kp)),
