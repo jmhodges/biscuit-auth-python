@@ -12,9 +12,9 @@ class TestBiscuitAuth(TestCase):
         self.assertTrue(KeyPair())
 
     def test_new_keypair_builder_add_fact_only_pred_name_default_symbols(self):
-
         pair = KeyPair()
         builder = Biscuit.builder(pair)
         builder.add_authority_fact_only_predicate_name("read")
         biscuit = builder.build()
         self.assertTrue(biscuit)
+        self.assertTrue(biscuit.authorizer())

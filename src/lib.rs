@@ -1,9 +1,8 @@
-use biscuit_auth::error::Token;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 
 use biscuit_auth::builder::{BiscuitBuilder as BABiscuitBuilder, Fact};
-use biscuit_auth::{error, Biscuit as BABiscuit, KeyPair as BAKeyPair};
+use biscuit_auth::{Authorizer as BAAuthorizer, Biscuit as BABiscuit, KeyPair as BAKeyPair};
 
 use ouroboros::self_referencing;
 #[pyclass]
@@ -44,6 +43,15 @@ impl Biscuit {
         }
         .try_build();
     }
+
+    fn authorizer(&self) -> PyResult<Authorizer> {
+        return AuthorizerTryBuilder {
+            biscuit: self.biscuit.clone(),
+            authorizer_builder: |biscuit| biscuit.authorizer(),
+        }
+        .try_build()
+        .map_err(|e| PyErr::new::<PyRuntimeError, _>(format!("Biscuit#authorizer error: {}", e)));
+    }
 }
 
 #[pyclass]
@@ -62,7 +70,10 @@ impl BiscuitBuilder {
         let fact = Fact::new(fact_name, vec![]);
         let res = self.with_builder_mut(|b| return b.add_authority_fact(fact));
         return res.map_err(|e| {
-            PyErr::new::<PyRuntimeError, _>(format!("biscuit_auth add_authority_fact error: {}", e))
+            PyErr::new::<PyRuntimeError, _>(format!(
+                "BiscuitBuilder.add_authority_fact error: {}",
+                e
+            ))
         });
     }
 
@@ -74,15 +85,26 @@ impl BiscuitBuilder {
             .with_builder(|builder| return builder.clone().build())
             .map(|biscuit| Biscuit { biscuit });
         return res.map_err(|e| {
-            PyErr::new::<PyRuntimeError, _>(format!("biscuit_auth build error: {}", e))
+            PyErr::new::<PyRuntimeError, _>(format!("BiscuitBuilder.build error: {}", e))
         });
     }
 }
+
+#[pyclass]
+#[self_referencing]
+struct Authorizer {
+    biscuit: BABiscuit,
+    #[borrows(biscuit)]
+    #[not_covariant]
+    authorizer: BAAuthorizer<'this>,
+}
+
 #[pymodule]
 fn biscuit_auth(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<KeyPair>()?;
     m.add_class::<Biscuit>()?;
     m.add_class::<BiscuitBuilder>()?;
+    m.add_class::<Authorizer>()?;
 
     Ok(())
 }
