@@ -29,10 +29,11 @@ impl Biscuit {
     #[staticmethod]
     fn builder(py_root: &KeyPair) -> PyResult<BiscuitBuilder> {
         let root = BAKeyPair::from(py_root.key_pair.private());
-        // BiscuitBuilderTryBuilder is made by ouroboros to allow storing a
-        // BABiscuitBuilder's in a Python object. BABiscuitBuilder has a
-        // required lifetime annotation and those around allowed in `#[pyclass]`
-        // structs, and so we adapt a technique from crfs to our own needs (see
+        // BiscuitBuilderTryBuilder is made by ouroboros's self_referencing
+        // macro. We need it to allow storing a BABiscuitBuilder in a Python
+        // object because a BABiscuitBuilder has a required lifetime annotation
+        // and those aren't allowed in `#[pyclass]` structs. We adapted a
+        // technique from crfs to our own needs (see
         // https://github.com/messense/crfs-rs/blob/main/python/src/lib.rs#L56-L72).
         // Seeing `'this` in Rust code is very funny.
         let builder_res = BiscuitBuilderTryBuilder {
