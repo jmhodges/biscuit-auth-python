@@ -29,7 +29,7 @@ impl Biscuit {
     #[staticmethod]
     fn builder(py_root: &KeyPair) -> PyResult<BiscuitBuilder> {
         let root = BAKeyPair::from(py_root.key_pair.private());
-        // BiscuitBuilderTryBuilder is made by ouroboros to allow store
+        // BiscuitBuilderTryBuilder is made by ouroboros to allow storing a
         // BABiscuitBuilder's in a Python object. BABiscuitBuilder has a
         // required lifetime annotation and those around allowed in `#[pyclass]`
         // structs, and so we adapt a technique from crfs to our own needs (see
