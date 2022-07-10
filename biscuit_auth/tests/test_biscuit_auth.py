@@ -3,13 +3,13 @@
 
 from unittest import TestCase
 
-import biscuit_auth
 from biscuit_auth import Biscuit, KeyPair
 
 
 class TestBiscuitAuth(TestCase):
     def test_golden_path(self):
-        self.assertTrue(biscuit_auth.hello())
+        # At least this should work or else the build is Seriously Wonky.
+        self.assertTrue(KeyPair())
 
     def test_new_keypair_builder_add_fact_only_pred_name_default_symbols(self):
 
