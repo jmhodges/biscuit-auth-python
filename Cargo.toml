@@ -9,7 +9,7 @@ name = "biscuit_auth"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-# FIXME add anyhow to features
-pyo3 = { version = "0.16.5", features = ["extension-module"] }
+anyhow = "1.0.58"
+pyo3 = { version = "0.16.5", features = ["extension-module", "anyhow"] }
 biscuit-auth = { version = "2.2.0" }
 ouroboros = "0.15.0"

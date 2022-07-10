@@ -1,7 +1,9 @@
+use biscuit_auth::error::Token;
+use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 
-use biscuit_auth::builder::BiscuitBuilder as BABiscuitBuilder;
-use biscuit_auth::{builder::*, error, Biscuit as BABiscuit, KeyPair as BAKeyPair};
+use biscuit_auth::builder::{BiscuitBuilder as BABiscuitBuilder, Fact};
+use biscuit_auth::{error, Biscuit as BABiscuit, KeyPair as BAKeyPair};
 
 use ouroboros::self_referencing;
 #[pyclass]
@@ -36,12 +38,11 @@ impl Biscuit {
         // technique from crfs to our own needs (see
         // https://github.com/messense/crfs-rs/blob/main/python/src/lib.rs#L56-L72).
         // Seeing `'this` in Rust code is very funny.
-        let builder_res = BiscuitBuilderTryBuilder {
+        return BiscuitBuilderTryBuilder {
             key_pair: root,
             builder_builder: |kp| Ok(BABiscuit::builder(kp)),
         }
         .try_build();
-        return builder_res;
     }
 }
 
@@ -54,6 +55,29 @@ struct BiscuitBuilder {
     builder: BABiscuitBuilder<'this>,
 }
 
+#[pymethods]
+impl BiscuitBuilder {
+    // FIXME not a good name, obvs :)
+    fn add_authority_fact_only_predicate_name(&mut self, fact_name: String) -> PyResult<()> {
+        let fact = Fact::new(fact_name, vec![]);
+        let res = self.with_builder_mut(|b| return b.add_authority_fact(fact));
+        return res.map_err(|e| {
+            PyErr::new::<PyRuntimeError, _>(format!("biscuit_auth add_authority_fact error: {}", e))
+        });
+    }
+
+    fn build(&self) -> PyResult<Biscuit> {
+        // This clone here makes this method a lil more expensive than desired
+        // but resolves a lifetime issue. It would be nice to find a way to do
+        // this without clone.
+        let res = self
+            .with_builder(|builder| return builder.clone().build())
+            .map(|biscuit| Biscuit { biscuit });
+        return res.map_err(|e| {
+            PyErr::new::<PyRuntimeError, _>(format!("biscuit_auth build error: {}", e))
+        });
+    }
+}
 #[pymodule]
 fn biscuit_auth(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<KeyPair>()?;
