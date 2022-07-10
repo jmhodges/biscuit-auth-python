@@ -36,7 +36,7 @@ impl Biscuit {
         // object because a BABiscuitBuilder has a required lifetime annotation
         // and those aren't allowed in `#[pyclass]` structs. We adapted a
         // technique from crfs to our own needs (see
-        // https://github.com/messense/crfs-rs/blob/main/python/src/lib.rs#L56-L72).
+        // https://github.com/messense/crfs-rs/blob/0e77658d65abefef8818cc25b0a57941ff41269b/python/src/lib.rs#L56-L72
         // Seeing `'this` in Rust code is very funny.
         return BiscuitBuilderTryBuilder {
             key_pair: root,
