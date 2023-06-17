@@ -12,4 +12,4 @@ crate-type = ["cdylib", "rlib"]
 anyhow = "1.0.58"
 pyo3 = { version = "0.16.5", features = ["extension-module", "anyhow"] }
 biscuit-auth = { version = "2.2.0" }
-ouroboros = "0.15.0"
+ouroboros = "0.16.0"
